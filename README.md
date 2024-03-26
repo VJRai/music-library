@@ -45,11 +45,11 @@ To start the Postgres container simply run the following command:
 
 
 # Endpoints
-| Method | Endpoint    | Description                        |
-|--------|-------------|------------------------------------|
-| POST   | /songs      | Add New Song                       |
-| GET    | /songs      | Retrieve Paginated Songs           |
-| GET    | /songs/{id} | Retrieve Song Resource Of Given ID |
+| Method | Endpoint           | Description                        |
+|--------|--------------------|------------------------------------|
+| POST   | /api/v1/songs      | Add New Song                       |
+| GET    | /api/v1/songs      | Retrieve Paginated Songs           |
+| GET    | /api/v1/songs/{id} | Retrieve Song Resource Of Given ID |
 
 
 # Considerations
