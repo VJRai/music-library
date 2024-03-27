@@ -1,14 +1,13 @@
+import { useEffect, useRef } from "react";
 import { Row as ReactTableRow, flexRender } from "@tanstack/react-table";
-import { Song } from "../../common/types/row.type";
-import { CSSStyles } from "../../common/types/style.type";
-import { RefObject, useEffect, useRef } from "react";
 import { ListChildComponentProps } from "react-window";
 import { TableCell, TableRow } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { SongDTO } from "../../common/types/song.types";
 
 
 type RenderRowProps = { 
-    row: ReactTableRow<Song>, 
+    row: ReactTableRow<SongDTO>, 
     setRowHeight: Function,
 } & ListChildComponentProps
 

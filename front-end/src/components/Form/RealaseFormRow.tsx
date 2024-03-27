@@ -222,7 +222,14 @@ export const ReleaseFormRow = ({
                     }
                 />
             </Box>
-            {renderAlbumFields()}
+            <Box sx={{
+                maxHeight: "300px",
+                overflow: "scroll",
+                display: "grid",
+                gap: "10px"
+            }}>
+                {renderAlbumFields()}
+            </Box>
         </Box>
     )
 }

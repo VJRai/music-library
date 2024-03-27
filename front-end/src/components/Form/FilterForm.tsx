@@ -1,14 +1,13 @@
 import { Delete } from "@mui/icons-material";
 import { Box, Button, FormControl, IconButton, InputLabel, MenuItem, Select, SxProps, TextField, useTheme } from "@mui/material"
 import { MutableRefObject } from "react";
-import dayjs from 'dayjs';
-import { Control, Controller, FieldValues, SubmitHandler, set, useFieldArray, useForm } from "react-hook-form";
+import { Controller, SubmitHandler, useFieldArray, useForm } from "react-hook-form";
 import { useOutletContext, useSearchParams } from "react-router-dom";
 import {v4} from 'uuid'
 import { errorMessage } from "../../common/errors";
 import { FormErrorHelperText } from "./FormErrorHelperText";
 import { FilterKey, FilterOperation, FilterParam, KEY, OPERATION } from "../../common/types/filter.types";
-import { filterArrayToParamString, flattenTimeToSeconds } from "../../common/utils";
+import { filterArrayToParamString } from "../../common/utils";
 
 
 

@@ -1,12 +1,11 @@
 import { AlbumOutlined, ArrowDownward, ArrowUpward, LabelOutlined, PersonOutline } from "@mui/icons-material";
-import { Box, Button, Chip, Paper, SxProps, Table, TableBody, TableCell, TableHead, TablePagination, TableRow, Theme, Typography } from "@mui/material"
+import { Box, Button, Paper, SxProps, Table, TableBody, TableCell, TableHead, TablePagination, TableRow, Theme, Typography } from "@mui/material"
 import { SortingState, Updater, createColumnHelper, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
 import dayjs from "dayjs";
 import { ChangeEvent, MutableRefObject, useEffect, useMemo, useRef, useState } from "react";
 import { useOutletContext, useSearchParams } from "react-router-dom"
 import { VariableSizeList as List, ListChildComponentProps, VariableSizeList } from 'react-window';
 import AutoSizer from "react-virtualized-auto-sizer";
-import { MetaData, Song } from "../../common/types/row.type";
 import { CSSStyles } from "../../common/types/style.type";
 import { Row } from "../../components/Table/Row";
 import { TablePaginationActions } from "../../components/Table/TablePaginationActions";
@@ -15,7 +14,7 @@ import { v4 } from 'uuid';
 import { useGetSongs } from "../../api/apiClient";
 import { secondsToSecondsMinutesHours } from "../../common/utils";
 import { Tags } from "./Tags";
-import { SongsDTO } from "../../common/types/song.types";
+import { SongDTO, SongsDTO } from "../../common/types/song.types";
 
 const initialDashboardSearchParams = {
     sortBy: `id:asc`,
@@ -23,7 +22,7 @@ const initialDashboardSearchParams = {
     size: "10"
 }
 
-const columnHelper = createColumnHelper<Song>()
+const columnHelper = createColumnHelper<SongDTO>()
 
 const styles: CSSStyles = {
     container: {
@@ -144,7 +143,6 @@ export const SongTable = () => {
             prev.set('sortBy', newSortingParams.join(','))
             return prev;
         })
-
 
     }, [JSON.stringify(sorting)])
 

@@ -12,7 +12,7 @@ import dayjs from "dayjs";
 import { useAddSong } from "../../api/apiClient";
 import { mutate } from "swr";
 import { green } from "@mui/material/colors";
-import { PropsWithChildren, forwardRef, useState } from "react";
+import { forwardRef, useState } from "react";
 
 const genres = [
     "2 tone",
@@ -1458,10 +1458,10 @@ export const Form = forwardRef<HTMLDivElement, FormProps>(({submitted}, ref) => 
     const theme = useTheme();
 
 
-    const { data, latestGetSongsKey, mutate: songMutate, isLoading } = useAddSong();
+    const { latestGetSongsKey, mutate: songMutate, isLoading } = useAddSong();
     const [success, setSuccess] = useState(false);
 
-    const { control, formState: {errors}, register, handleSubmit, getValues, reset } = useForm<FormValue>({
+    const { control, formState: {errors}, register, handleSubmit, getValues } = useForm<FormValue>({
         defaultValues: defaultValues,
     });
 
@@ -1595,8 +1595,15 @@ export const Form = forwardRef<HTMLDivElement, FormProps>(({submitted}, ref) => 
                         />
                         <FormErrorHelperText errorMessage={errors.title?.message}  />
                     </FormControl>
-
-                    {renderArtistRows()}
+                    
+                    <Box sx={{
+                        maxHeight:"300px",
+                        overflow:"scroll",
+                        display:"grid",
+                        gap:"10px"
+                    }}>
+                        {renderArtistRows()}
+                    </Box>
 
                     <Box sx={{
                         display: "grid",

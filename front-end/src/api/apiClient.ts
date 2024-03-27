@@ -1,6 +1,5 @@
-import { Song } from '../common/types/row.type';
 import useSWR, { SWRResponse } from 'swr';
-import { SongsDTO } from '../common/types/song.types';
+import { SongDTO, SongsDTO } from '../common/types/song.types';
 import { useState } from 'react';
 import { RequestError } from '../common/errors';
 
@@ -37,7 +36,7 @@ export const useGetSongs = (searchParams: string)=>{
 }
 
 export const useGetSong = (id: string) => {
-    return useSWR<Song, Error>(
+    return useSWR<SongDTO, Error>(
         api.song(id), fetcher
     );
 };
