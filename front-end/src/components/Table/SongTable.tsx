@@ -253,7 +253,7 @@ export const SongTable = () => {
 
         if(!isLoading && !error && !tableData.numberOfElements){
 
-            let feedback = 'Looks like you have no song entries. Press the little + icon at the bottom left-hand corner & start creating some!'
+            let feedback = 'Looks like you have no song entries. Press the little + icon at the bottom right-hand corner & start creating some!'
 
             if(searchParams.has('filter')){
                 feedback = 'Looks like your search rendered no results...'
