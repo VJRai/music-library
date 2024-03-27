@@ -253,6 +253,33 @@ export const SongTable = () => {
             return Array.from(Array(10).keys()).map(() => <SkeletonRow key={v4()} />)
         }
 
+        if(!isLoading && !error && !tableData.numberOfElements){
+
+            let feedback = 'Looks like you have no song entries. Press the little + icon at the bottom left-hand corner & start creating some!'
+
+            if(searchParams.has('filter')){
+                feedback = 'Looks like your search rendered no results...'
+            }
+
+            return (
+                <Box sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    flexDirection: "column"
+                }}>
+                    <Box>
+                        <Typography sx={{ fontWeight: "bold" }} variant="h6">
+                            Oh no!
+                        </Typography>
+                    </Box>
+                    <Typography>
+                        {feedback}
+                    </Typography>
+                </Box>
+            )
+        }
+
         return (
             <div>
                 <AutoSizer>

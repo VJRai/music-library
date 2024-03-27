@@ -211,49 +211,7 @@ export const FilterForm = () => {
 
     const onSubmit: SubmitHandler<FilterFormValue> = (data: FilterFormValue) => {
 
-        const validatedfilters = data.filters.map(({key, operation, value}) => {
-
-            switch(key){
-
-                case "duration":
-
-                    const timeSplit = value.split(":");
-
-                    if (timeSplit.length === 1) {
-                        value = `${flattenTimeToSeconds(0, 0, +timeSplit[0])}`
-                    }
-
-                    if (timeSplit.length === 2) {
-                        value = `${flattenTimeToSeconds(0, +timeSplit[0], +timeSplit[1])}`
-                    }
-
-                    if (timeSplit.length === 3) {
-                        value = `${flattenTimeToSeconds(+timeSplit[0], +timeSplit[1], +timeSplit[2])}`
-                    }
-                break;
-                case "releaseDate":
-
-                    console.log({ value, date: dayjs().set("year", +value).valueOf() })
-
-                    value = `${dayjs().set("year", +value).valueOf() }`; 
-
-                    
-
-                break;
-
-            }
-
-
-            return ({
-                key,
-                operation,
-                value
-            })
-
-        })
-
-        
-        const filterString = filterArrayToParamString(validatedfilters)
+        const filterString = filterArrayToParamString(data.filters)
 
         setSearchParams((prev) => {
             prev.delete("filter")
@@ -266,9 +224,9 @@ export const FilterForm = () => {
     const removeHandler = (index: number) => {
 
         const filterParams = searchParams.get("filter");
-
-
         const filterToDelete = getValues().filters[index];
+
+        console.log({ filterParams, filterToDelete })
 
         if (filterParams){
             const filterString = filterArrayToParamString([filterToDelete])
@@ -276,6 +234,8 @@ export const FilterForm = () => {
             const filterParamsArr = filterParams.split('~');
 
             const newParams = filterParamsArr.filter((param) => param !== filterString);
+
+            console.log({ filterString, filterParamsArr, newParams })
 
 
             setSearchParams((prev) => {

@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import { FilterParam } from "./types/filter.types";
 
 export const flattenTimeToSeconds = (hours: number, minutes: number, seconds:number) => {
@@ -26,7 +27,7 @@ export const secondsToSecondsMinutesHours = (totalSeconds: number = 0) => {
 
 
     if (!minutes) {
-        return `${secondsString}`
+        return `00:${secondsString}`
     }
 
     if(!hours){
@@ -42,6 +43,39 @@ export const filterArrayToParamString = (filterValueArray: FilterParam[]) => {
     const filterSet = new Set();
 
     filterValueArray.forEach(({ key, operation, value }) => {
+
+
+        switch (key) {
+
+            case "duration":
+
+                const timeSplit = value.split(":");
+
+                if (timeSplit.length === 1) {
+                    value = `${flattenTimeToSeconds(0, 0, +timeSplit[0])}`
+                }
+
+                if (timeSplit.length === 2) {
+                    value = `${flattenTimeToSeconds(0, +timeSplit[0], +timeSplit[1])}`
+                }
+
+                if (timeSplit.length === 3) {
+                    value = `${flattenTimeToSeconds(+timeSplit[0], +timeSplit[1], +timeSplit[2])}`
+                }
+                break;
+            case "releaseDate":
+                value = `${dayjs()
+                    .set("year", +value)
+                    .set("hour", 0)
+                    .set("minute", 0)
+                    .set("second", 0)
+                    .set("milliseconds", 0)
+                    .valueOf()}`;
+                break;
+        }
+
+
+
         filterSet.add(`${key}:${operation}:${value}`)
     });
 
