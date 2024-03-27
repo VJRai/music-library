@@ -12,7 +12,7 @@ import dayjs from "dayjs";
 import { useAddSong } from "../../api/apiClient";
 import { mutate } from "swr";
 import { green } from "@mui/material/colors";
-import { useState } from "react";
+import { PropsWithChildren, forwardRef, useState } from "react";
 
 const genres = [
     "2 tone",
@@ -1449,7 +1449,11 @@ const defaultValues: Partial<FormValue> = {
     }],
 }
 
-export const Form = ({submitted}:{submitted: Function}) => {
+type FormProps = {
+    submitted: Function
+}
+
+export const Form = forwardRef<HTMLDivElement, FormProps>(({submitted}, ref) => {
 
     const theme = useTheme();
 
@@ -1534,13 +1538,11 @@ export const Form = ({submitted}:{submitted: Function}) => {
             duration,
             releaseTimestamp
         }
-        console.log({ isLoading })
+        
         await songMutate(body);
-        console.log({ latestGetSongsKey, isLoading })
 
         mutate(latestGetSongsKey)
 
-        
         setSuccess(true);
 
         setTimeout(() => {
@@ -1550,7 +1552,7 @@ export const Form = ({submitted}:{submitted: Function}) => {
     }
 
     return (
-        <Box ref = { null } sx={{maxWidth: "600px"}}>
+        <Box ref={ref} sx={{maxWidth: "600px"}}>
             <Paper sx={{
                 background: theme.palette.primary.main,
                 color: theme.palette.common.white,
@@ -1699,6 +1701,4 @@ export const Form = ({submitted}:{submitted: Function}) => {
             </Paper>
         </Box>
     )
-
-
-}
+})

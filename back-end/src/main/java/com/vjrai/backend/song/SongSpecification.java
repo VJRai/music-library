@@ -8,7 +8,9 @@ import com.vjrai.backend.genre.Genre;
 import jakarta.persistence.criteria.*;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.util.Calendar;
 import java.util.Objects;
+import java.util.TimeZone;
 
 public class SongSpecification implements Specification<Song>{
 
@@ -174,9 +176,26 @@ public class SongSpecification implements Specification<Song>{
 
                 if(searchCriteria.getFilterKey().equals("releaseDate")) {
 
-                    return criteriaBuilder.equal(
+                    Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+                    calendar.setTimeInMillis(Long.parseLong(strToSearch));
+                    calendar.set(Calendar.DAY_OF_YEAR, 1);
+                    calendar.set(Calendar.SECOND, 0);
+                    calendar.set(Calendar.MINUTE, 0);
+                    calendar.set(Calendar.HOUR_OF_DAY, 0);
+                    calendar.set(Calendar.MILLISECOND, 0);
+
+                    Long firstDay = calendar.getTime().getTime();
+
+                    calendar.set(Calendar.DAY_OF_YEAR, calendar.getActualMaximum(Calendar.DAY_OF_YEAR));
+                    calendar.set(Calendar.MINUTE, 59);
+                    calendar.set(Calendar.HOUR_OF_DAY, 23);
+                    calendar.set(Calendar.SECOND, 59);
+
+                    Long lastDayOfYear = calendar.getTime().getTime();
+
+                    return criteriaBuilder.between(
                         root.get(searchCriteria.getFilterKey())
-                        , strToSearch
+                        , firstDay, lastDayOfYear
                     );
 
                 }

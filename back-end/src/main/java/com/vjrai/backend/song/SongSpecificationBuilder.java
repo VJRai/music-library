@@ -13,7 +13,6 @@ public class SongSpecificationBuilder implements ISpecificationBuilder<Song> {
     private final List<SearchCriteria> searchParams = new ArrayList<>();
 
     public final SongSpecificationBuilder with(SearchCriteria searchCriteria){
-        System.out.println(searchParams.size());
         searchParams.add(searchCriteria);
         return this;
     }
@@ -28,8 +27,6 @@ public class SongSpecificationBuilder implements ISpecificationBuilder<Song> {
         for (int index = 1; index < searchParams.size(); index++){
 
             SearchCriteria criteria = searchParams.get(index);
-
-            System.out.println(criteria.toString());
 
             songSpecification = SearchOperation.getSearchType(criteria.getSearchType()) == SearchOperation.ALL
                     ? Specification.where(songSpecification).and(new SongSpecification(criteria))

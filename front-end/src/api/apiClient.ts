@@ -32,7 +32,7 @@ export const useGetSongs = (searchParams: string)=>{
     latestGetSongsKey = key;
 
     return useSWR<SongsDTO, Error>(
-        key, (url: RequestInfo | URL) => fetch(url).then(res => res.json())
+        key, fetcher
     );
 }
 

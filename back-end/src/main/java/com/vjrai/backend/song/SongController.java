@@ -45,9 +45,6 @@ public class SongController {
             SongSpecificationBuilder songSpecificationBuilder = new SongSpecificationBuilder();
             Specification<Song> songSpecification = ParamUtils.stringToSpecification(filter, songSpecificationBuilder);
 
-            System.out.println(songSpecificationBuilder);
-
-
             songPage = this.songService.getSongs(page, size, Sort.by(sorts), songSpecification);
         }else{
             songPage = this.songService.getSongs(page, size, Sort.by(sorts));
@@ -69,8 +66,6 @@ public class SongController {
 
     @PostMapping()
     public ResponseEntity<SongGetResponseDTO> addSong(@RequestBody @Valid SongGetRequestDTO songGetRequestDto){
-
-        System.out.println(songGetRequestDto);
 
         Song song = this.songService.addSong(songGetRequestDto);
         return new ResponseEntity<>(SongGetResponseDTO.fromEntity(song), HttpStatus.CREATED);

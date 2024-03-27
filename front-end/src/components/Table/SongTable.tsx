@@ -1,10 +1,9 @@
 import { AlbumOutlined, ArrowDownward, ArrowUpward, LabelOutlined, PersonOutline } from "@mui/icons-material";
-import { Box, Chip, Paper, SxProps, Table, TableBody, TableCell, TableHead, TablePagination, TableRow, Theme } from "@mui/material"
+import { Box, Button, Chip, Paper, SxProps, Table, TableBody, TableCell, TableHead, TablePagination, TableRow, Theme, Typography } from "@mui/material"
 import { SortingState, Updater, createColumnHelper, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
 import dayjs from "dayjs";
 import { ChangeEvent, MutableRefObject, useEffect, useMemo, useRef, useState } from "react";
 import { useOutletContext, useSearchParams } from "react-router-dom"
-import useSWR, { SWRResponse } from "swr";
 import { VariableSizeList as List, ListChildComponentProps, VariableSizeList } from 'react-window';
 import AutoSizer from "react-virtualized-auto-sizer";
 import { MetaData, Song } from "../../common/types/row.type";
@@ -13,8 +12,10 @@ import { Row } from "../../components/Table/Row";
 import { TablePaginationActions } from "../../components/Table/TablePaginationActions";
 import { SkeletonRow } from "../../components/Table/SkeletonRow";
 import { v4 } from 'uuid';
-import { api, useCancelableSWR, useGetSongs } from "../../api/apiClient";
+import { useGetSongs } from "../../api/apiClient";
 import { secondsToSecondsMinutesHours } from "../../common/utils";
+import { Tags } from "./Tags";
+import { SongsDTO } from "../../common/types/song.types";
 
 const initialDashboardSearchParams = {
     sortBy: `id:asc`,
@@ -22,62 +23,7 @@ const initialDashboardSearchParams = {
     size: "10"
 }
 
-type SongDataResponse = {
-    content: Song[],
-    pageable: {
-        pageNumber: number,
-        pageSize: number,
-        sort: {
-            unsorted: boolean,
-            sorted: boolean,
-            empty: boolean
-        },
-        offset: number,
-        unpaged: boolean,
-        paged: boolean
-    },
-    totalPages: number,
-    totalElements: number,
-    last: boolean,
-    numberOfElements: number,
-    first: boolean,
-    number: number,
-    size: number,
-    sort: {
-        unsorted: boolean,
-        sorted: boolean,
-        empty: boolean
-    },
-    empty: boolean
-}
-
 const columnHelper = createColumnHelper<Song>()
-
-function Tags<T extends MetaData>(list: T[], icon: JSX.Element) {
-
-    const renderTags = () => list.map((list: T, index) => (
-        <Box
-            key={index}
-            sx={{
-                maxWidth: "250px",
-                display: 'block'
-            }}
-        >
-            <Chip icon={icon} label={list.name} />
-        </Box>
-    ))
-
-    return (
-        <Box sx={{
-            display: "grid",
-            gridAutoRows: "max-content",
-            gridGap: "10px",
-        }}>
-            {renderTags()}
-        </Box>
-    )
-
-}
 
 const styles: CSSStyles = {
     container: {
@@ -136,7 +82,7 @@ const columns = [
         size: 90
     }),
     columnHelper.accessor('releaseDate', {
-        header: () => <span>Release date</span>,
+        header: () => <span>Release Year</span>,
         cell: info => dayjs(parseInt(info.getValue())).format("YYYY").toString(),
     }),
     columnHelper.accessor('artists', {
@@ -151,6 +97,7 @@ const columns = [
         cell: info => {
             return Tags(info.getValue(), <AlbumOutlined />)
         },
+        size: 250
     }),
     columnHelper.accessor('genres', {
         header: () => <span>Genres</span>,
@@ -167,29 +114,19 @@ export const SongTable = () => {
         drawerRef: MutableRefObject<HTMLDivElement | null>
     }>();
 
-
     const listRef = useRef<VariableSizeList<any> | null>(null)
     const rowHeights = useRef<{
         [key: string]: number
     }>({});
 
-
     const [searchParams, setSearchParams] = useSearchParams(initialDashboardSearchParams);
 
     const params = Array.from(searchParams.entries()).flatMap(([k, v]) => `${k}=${v}`).join('&');
 
-    const { data, isLoading } = useGetSongs(params);
+    const { data, isLoading, error } = useGetSongs(params);
 
-    const [tableData, setTableData] = useState<SongDataResponse>();
+    const [tableData, setTableData] = useState<SongsDTO>();
     const [sorting, setSorting] = useState<SortingState>([]);
-
-    //let abortControllerRef = useRef<AbortController>(abortController);
-
-
-    // useEffect(() => {
-    //     abortControllerRef.current.abort()
-    // }, [searchParams])
-
 
     useEffect(() => {
 
@@ -212,7 +149,6 @@ export const SongTable = () => {
     }, [JSON.stringify(sorting)])
 
     useEffect(() => {
-        console.log("New data:", data);
         setTableData(data)
     }, [data])
 
@@ -282,8 +218,36 @@ export const SongTable = () => {
         })
     };
 
+    const retryHandler = () => {
+        setSearchParams(initialDashboardSearchParams)
+    }
+
 
     const renderTableBody = () => {
+
+        if (error) {
+            return (
+                <Box sx={{
+                    display:"flex",
+                    justifyContent:"center",
+                    alignItems:"center",
+                    flexDirection:"column"
+                }}>
+                    <Box>
+                        <Typography sx={{fontWeight: "bold"}} variant="h6">
+                            Oh no!
+                        </Typography>
+                    </Box>
+                    <Typography>
+                        An issue seems to have occured while fetching your songs.<br/>
+                    </Typography>
+                    <Button onClick={retryHandler} sx={{
+                        marginTop: "30px"
+                    }} variant="outlined">LETS TRY AGAIN</Button>
+                </Box>
+            )
+        }
+
 
         if (isLoading || !tableData) {
             return Array.from(Array(10).keys()).map(() => <SkeletonRow key={v4()} />)

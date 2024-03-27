@@ -1,6 +1,7 @@
 import { Delete } from "@mui/icons-material";
 import { Box, Button, FormControl, IconButton, InputLabel, MenuItem, Select, SxProps, TextField, useTheme } from "@mui/material"
 import { MutableRefObject } from "react";
+import dayjs from 'dayjs';
 import { Control, Controller, FieldValues, SubmitHandler, set, useFieldArray, useForm } from "react-hook-form";
 import { useOutletContext, useSearchParams } from "react-router-dom";
 import {v4} from 'uuid'
@@ -36,7 +37,7 @@ const keyFilterItems: SelectListItem<FilterKey>[] = [
         value: KEY.DURATION,
     },
     {
-        label: "Release Date",
+        label: "Release Year",
         value: KEY.RELEASE_DATE,
     },
     {
@@ -210,27 +211,38 @@ export const FilterForm = () => {
 
     const onSubmit: SubmitHandler<FilterFormValue> = (data: FilterFormValue) => {
 
-        console.log({data})
-
         const validatedfilters = data.filters.map(({key, operation, value}) => {
 
-            if(key === "duration"){
+            switch(key){
 
-                const timeSplit = value.split(":");
+                case "duration":
 
-                if (timeSplit.length === 1) {
-                    value = `${flattenTimeToSeconds(0, 0, +timeSplit[0])}`
-                }
+                    const timeSplit = value.split(":");
 
-                if (timeSplit.length === 2){
-                    value = `${flattenTimeToSeconds(0, +timeSplit[0], +timeSplit[1])}`
-                }
+                    if (timeSplit.length === 1) {
+                        value = `${flattenTimeToSeconds(0, 0, +timeSplit[0])}`
+                    }
 
-                if (timeSplit.length === 3) {
-                    value = `${flattenTimeToSeconds(+timeSplit[0], +timeSplit[1], +timeSplit[2])}`
-                }
+                    if (timeSplit.length === 2) {
+                        value = `${flattenTimeToSeconds(0, +timeSplit[0], +timeSplit[1])}`
+                    }
+
+                    if (timeSplit.length === 3) {
+                        value = `${flattenTimeToSeconds(+timeSplit[0], +timeSplit[1], +timeSplit[2])}`
+                    }
+                break;
+                case "releaseDate":
+
+                    console.log({ value, date: dayjs().set("year", +value).valueOf() })
+
+                    value = `${dayjs().set("year", +value).valueOf() }`; 
+
+                    
+
+                break;
 
             }
+
 
             return ({
                 key,

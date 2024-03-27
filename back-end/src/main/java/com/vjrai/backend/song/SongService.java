@@ -57,7 +57,6 @@ public class SongService {
     public Page<SongGetResponseDTO>getSongs(Integer pageNumber, Integer pageSize, Sort sort, Specification<Song> songSpecification){
         Pageable page = PageRequest.of(pageNumber, pageSize).withSort(sort);
         Page<Song> songs = this.songRepository.findAll(songSpecification, page);
-        System.out.println(songs.getContent().size());
         return songs.map(SongGetResponseDTO::fromEntity);
     }
 
@@ -70,8 +69,6 @@ public class SongService {
     public SongGetResponseDTO getSong(Long songId) {
 
         Optional<Song> song = this.songRepository.findById(songId);
-
-        System.out.println(song);
 
         if(song.isPresent()){
             return SongGetResponseDTO.fromEntity(song.get());

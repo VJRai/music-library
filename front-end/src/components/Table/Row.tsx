@@ -9,22 +9,9 @@ import { useNavigate } from "react-router-dom";
 
 type RenderRowProps = { 
     row: ReactTableRow<Song>, 
-    // isScrolling: boolean,
-    // styles?: CSSStyles,
-    // index: number,
     setRowHeight: Function,
 } & ListChildComponentProps
 
-const styles: CSSStyles = {
-    tableBodyRow: {
-        display: 'flex',
-        position: 'absolute',
-        width: '100%',
-    },
-    tableBodyRowCell: {
-        display: 'flex'
-    }
-};
 
 export const Row = ({ row, setRowHeight, index, style, isScrolling }: RenderRowProps) => {
 
