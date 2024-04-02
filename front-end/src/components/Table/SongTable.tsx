@@ -191,6 +191,19 @@ export const SongTable = () => {
     const updateRowCountHandler = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
 
         setSearchParams((prev) => {
+
+            const currentPage = prev.get('page');
+            const size = e.target.value;
+
+            if (currentPage && data?.totalElements){
+                const projectedEntryCount = +currentPage * +size;
+
+                if (projectedEntryCount > data?.totalElements){
+                    prev.set("page", "0");
+                }
+
+            }
+
             prev.set("size", `${e.target.value}`)
             return prev;
         })
@@ -249,6 +262,13 @@ export const SongTable = () => {
 
         if (isLoading || !tableData) {
             return Array.from(Array(10).keys()).map(() => <SkeletonRow key={v4()} />)
+        }
+
+        if (!isLoading && !error && !tableData.numberOfElements && tableData.totalElements > 0) {
+            setSearchParams((prev) => {
+                prev.set("page", `0`)
+                return prev;
+            });
         }
 
         if(!isLoading && !error && !tableData.numberOfElements){
