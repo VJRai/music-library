@@ -225,17 +225,12 @@ export const FilterForm = () => {
         const filterParams = searchParams.get("filter");
         const filterToDelete = getValues().filters[index];
 
-        console.log({ filterParams, filterToDelete })
-
         if (filterParams){
             const filterString = filterArrayToParamString([filterToDelete])
 
             const filterParamsArr = filterParams.split('~');
 
             const newParams = filterParamsArr.filter((param) => param !== filterString);
-
-            console.log({ filterString, filterParamsArr, newParams })
-
 
             setSearchParams((prev) => {
                 prev.delete("filter");

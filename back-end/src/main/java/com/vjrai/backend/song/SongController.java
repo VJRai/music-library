@@ -1,33 +1,22 @@
 package com.vjrai.backend.song;
 
-import com.vjrai.backend.common.utils.ParamUtils;
-import com.vjrai.backend.song.dto.request.SongGetRequestDTO;
+import com.vjrai.backend.song.dto.request.SongCreateRequestDTO;
 import com.vjrai.backend.song.dto.response.SongGetResponseDTO;
 import jakarta.validation.Valid;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @RestController
 @RequestMapping(path = "api/v1/songs")
 public class SongController {
     private final SongService songService;
 
-    private ModelMapper modelMapper;
-
     @Autowired
-    public SongController(SongService songService, ModelMapper modelMapper) {
+    public SongController(SongService songService) {
         this.songService = songService;
-        this.modelMapper = modelMapper;
     }
 
     @GetMapping()
@@ -38,17 +27,7 @@ public class SongController {
             @RequestParam (value ="filter", required = false) String filter
     ){
 
-        Page<SongGetResponseDTO> songPage;
-        List<Sort.Order> sorts = ParamUtils.stringToSortOrderList(sort);
-
-        if(filter != null){
-            SongSpecificationBuilder songSpecificationBuilder = new SongSpecificationBuilder();
-            Specification<Song> songSpecification = ParamUtils.stringToSpecification(filter, songSpecificationBuilder);
-
-            songPage = this.songService.getSongs(page, size, Sort.by(sorts), songSpecification);
-        }else{
-            songPage = this.songService.getSongs(page, size, Sort.by(sorts));
-        }
+        Page<SongGetResponseDTO> songPage = this.songService.getSongs(page, size, sort, filter);
 
         return new ResponseEntity<>(songPage, HttpStatus.OK);
 
@@ -56,7 +35,7 @@ public class SongController {
 
 
     @GetMapping("/{id}")
-    public ResponseEntity<SongGetResponseDTO> getSong(@PathVariable("id") Long songId) throws ChangeSetPersister.NotFoundException {
+    public ResponseEntity<SongGetResponseDTO> getSong(@PathVariable("id") Long songId) {
 
         SongGetResponseDTO songGetResponseDTO = this.songService.getSong(songId);
 
@@ -65,9 +44,9 @@ public class SongController {
     }
 
     @PostMapping()
-    public ResponseEntity<SongGetResponseDTO> addSong(@RequestBody @Valid SongGetRequestDTO songGetRequestDto){
+    public ResponseEntity<SongGetResponseDTO> addSong(@RequestBody @Valid SongCreateRequestDTO songCreateRequestDto){
 
-        Song song = this.songService.addSong(songGetRequestDto);
+        Song song = this.songService.addSong(songCreateRequestDto);
         return new ResponseEntity<>(SongGetResponseDTO.fromEntity(song), HttpStatus.CREATED);
     }
 

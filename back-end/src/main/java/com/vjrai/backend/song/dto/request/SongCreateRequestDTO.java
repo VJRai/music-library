@@ -12,13 +12,14 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class SongGetRequestDTO {
+public class SongCreateRequestDTO {
 
     @NotNull(message = "Must have a value.")
     @NotBlank(message = "Must not be blank.")
     private String title;
 
     @Valid
+    @NotEmpty(message = "Song must have at least one artist.")
     private List<ArtistDTO> artists = new ArrayList<>();
 
     @Valid

@@ -8,10 +8,12 @@ import com.vjrai.backend.common.*;
 import com.vjrai.backend.album.AlbumDTO;
 import com.vjrai.backend.artist.ArtistDTO;
 import com.vjrai.backend.common.exception.SongNotFoundException;
+import com.vjrai.backend.common.utils.ParamUtils;
 import com.vjrai.backend.genre.Genre;
 import com.vjrai.backend.genre.GenreRepository;
-import com.vjrai.backend.song.dto.request.SongGetRequestDTO;
+import com.vjrai.backend.song.dto.request.SongCreateRequestDTO;
 import com.vjrai.backend.song.dto.response.SongGetResponseDTO;
+import io.micrometer.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -54,15 +56,20 @@ public class SongService {
 
     }
 
-    public Page<SongGetResponseDTO>getSongs(Integer pageNumber, Integer pageSize, Sort sort, Specification<Song> songSpecification){
-        Pageable page = PageRequest.of(pageNumber, pageSize).withSort(sort);
-        Page<Song> songs = this.songRepository.findAll(songSpecification, page);
-        return songs.map(SongGetResponseDTO::fromEntity);
-    }
+    public Page<SongGetResponseDTO>getSongs(Integer pageNumber, Integer pageSize, String sort, String filter){
 
-    public Page<SongGetResponseDTO>getSongs(Integer pageNumber, Integer pageSize, Sort sort){
-        Pageable page = PageRequest.of(pageNumber, pageSize).withSort(sort);
-        Page<Song> songs = this.songRepository.findAll(page);
+        List<Sort.Order> sorts = ParamUtils.stringToSortOrderList(sort);
+        Pageable page = PageRequest.of(pageNumber, pageSize).withSort(Sort.by(sorts));
+        Page<Song> songs;
+
+        if(StringUtils.isNotEmpty(filter)){
+            SongSpecificationBuilder songSpecificationBuilder = new SongSpecificationBuilder();
+            Specification<Song> songSpecification = ParamUtils.stringToSpecification(filter, songSpecificationBuilder);
+            songs = this.songRepository.findAll(songSpecification, page);
+        }else{
+            songs = this.songRepository.findAll(page);
+        }
+
         return songs.map(SongGetResponseDTO::fromEntity);
     }
 
@@ -78,19 +85,19 @@ public class SongService {
 
     }
 
-    public Song addSong(SongGetRequestDTO songGetRequestDto){
+    public Song addSong(SongCreateRequestDTO songCreateRequestDto){
 
         Song song = new Song(
-            songGetRequestDto.getTitle(),
-            songGetRequestDto.getDuration(),
-            songGetRequestDto.getReleaseTimestamp()
+            songCreateRequestDto.getTitle(),
+            songCreateRequestDto.getDuration(),
+            songCreateRequestDto.getReleaseTimestamp()
         );
 
         this.songRepository.save(song);
 
 
         List<Artist> artists = null;
-        for(ArtistDTO artistDto: songGetRequestDto.getArtists()) {
+        for(ArtistDTO artistDto: songCreateRequestDto.getArtists()) {
 
             Artist artist = null;
             String artistName = artistDto.getName();
@@ -110,7 +117,7 @@ public class SongService {
 
         }
 
-        for(AlbumDTO albumDTO: songGetRequestDto.getAlbums()){
+        for(AlbumDTO albumDTO: songCreateRequestDto.getAlbums()){
 
             Album album = null;
 
@@ -131,7 +138,7 @@ public class SongService {
 
         }
 
-        for(String genreDto: songGetRequestDto.getGenres()){
+        for(String genreDto: songCreateRequestDto.getGenres()){
             Genre genre;
 
             genre = this.genreRepository.findByName(genreDto);

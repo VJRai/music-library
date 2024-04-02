@@ -25,9 +25,10 @@ The front-end has been built using React. You can use the following commands to 
 # Back-end
 The back-end is written in Java & utilises Spring-boot. The application can be interacted with using the following command:
 
-| Command           | Description                                 |
-|-------------------|---------------------------------------------|
-| ./gradlew bootrun | Run the application through Gradle directly |
+| Command                    | Description                                 |
+|----------------------------|---------------------------------------------|
+| ./gradlew bootrun          | Run the application through Gradle directly |
+| ./gradlew cleanTest test   | Run all associated tests                    |
 
 
 # Database
