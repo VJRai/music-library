@@ -48,7 +48,7 @@ public class SongGetResponseDTO implements Serializable {
         for(SongArtist songArtist: song.getArtists()){
 
             Artist artist = songArtist.getArtist();
-            songGetResponseDTO.getArtists().add(new SongArtistDTO(artist.getId(), artist.getName()));
+            songGetResponseDTO.getArtists().add(new SongArtistDTO(artist.getId(), artist.getName(), songArtist.getArtistCredit()));
         }
 
         for(SongAlbum songAlbum: song.getAlbums()){

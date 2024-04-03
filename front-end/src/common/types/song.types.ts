@@ -4,12 +4,16 @@ export type MetaData = {
     name: string
 }
 
+export type ArtistMetaData = MetaData & {
+    credit: string
+}
+
 export type SongDTO = {
     id: string,
     title: string,
     duration: number,
     releaseDate: string,
-    artists: MetaData[],
+    artists: ArtistMetaData[],
     albums: MetaData[],
     genres: MetaData[]
 }

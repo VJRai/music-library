@@ -42,7 +42,7 @@ CREATE TABLE public.songs_artists (
 	created_at timestamp(6) NOT NULL,
 	song_id int8 NOT NULL,
 	artist_credit varchar(255) NOT NULL,
-	CONSTRAINT songs_artists_artist_credit_check CHECK (((artist_credit)::text = ANY ((ARRAY['PRIMARY'::character varying, 'FEATURE'::character varying])::text[]))),
+	CONSTRAINT songs_artists_artist_credit_check CHECK (((artist_credit)::text = ANY ((ARRAY['PRIMARY'::character varying, 'FEATURED'::character varying])::text[]))),
 	CONSTRAINT songs_artists_pkey PRIMARY KEY (artist_id, song_id)
 );
 

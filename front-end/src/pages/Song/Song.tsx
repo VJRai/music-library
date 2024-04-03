@@ -3,7 +3,7 @@ import { v4 } from 'uuid'
 import { useGetSong } from "../../api/apiClient";
 import { useNavigate, useParams } from "react-router-dom";
 import { Album, ArrowBack, ExpandMore, More, MusicNote, RecordVoiceOverOutlined } from "@mui/icons-material";
-import { MetaData, SongDTO } from "../../common/types/song.types";
+import { ArtistMetaData, MetaData, SongDTO } from "../../common/types/song.types";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { secondsToSecondsMinutesHours } from "../../common/utils";
@@ -42,6 +42,23 @@ const styles: CSSStyles = {
         display: "flex",
         flexDirection: "column",
         justifyContent:"flex-end"
+    },
+    metaDataContainer: {
+        padding: "20px",
+        borderRadius: "8px",
+        display: "flex",
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexDirection: "column",
+        gap: "10px"
+    },
+    metaDataIcon: {
+        width: "100px",
+        height: "100px",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        borderRadius: "50%"
     }
 
 }
@@ -117,32 +134,50 @@ export const LoadedSong = ({data}: {data: SongDTO}) => {
         setExpanded(isExpanded ? panel : false);
     };
 
-    const render = (list: MetaData[], icon: JSX.Element) => {
+    const renderArtists = (list: ArtistMetaData[], icon: JSX.Element) => {
 
-        return list.map(({ name }) => {
+        return list.map(({ name, credit }) => {
             return (
-                <Box key={v4()}  sx={{
+                <Box key={v4()} sx={{
                     background: theme.palette.primary.main,
                     color: theme.palette.common.white,
-                    padding: "20px",
-                    borderRadius: "8px",
-                    display: "flex",
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    flexDirection: "column",
-                    gap: "10px"
+                    ...styles.metaDataContainer
                 }}>
                     <Paper sx={{
-                        width: "100px",
-                        height: "100px",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
                         [theme.breakpoints.up('md')]: {
                             width: "200px",
                             height: "200px",
                         },
-                        borderRadius: "50%"
+                        ...styles.metaDataIcon
+                    }}>
+                        {icon}
+                    </Paper>
+                    <Typography variant="overline">{name}</Typography>
+                    <Box>
+                        <Typography variant="overline">{credit}</Typography>
+                    </Box>
+                </Box>
+            )
+        })
+
+    }
+
+    const render = (list: MetaData[], icon: JSX.Element) => {
+
+        return list.map(({ name }) => {
+
+            return (
+                <Box key={v4()}  sx={{
+                    background: theme.palette.primary.main,
+                    color: theme.palette.common.white,
+                    ...styles.metaDataContainer
+                }}>
+                    <Paper sx={{
+                        [theme.breakpoints.up('md')]: {
+                            width: "200px",
+                            height: "200px",
+                        },
+                        ...styles.metaDataIcon
                     }}>
                         {icon}
                     </Paper>
@@ -200,7 +235,7 @@ export const LoadedSong = ({data}: {data: SongDTO}) => {
                         flexWrap: "wrap",
                         gap: "20px"
                     }}>
-                        {render(data.artists, <RecordVoiceOverOutlined />)}
+                        {renderArtists(data.artists, <RecordVoiceOverOutlined />)}
                     </AccordionDetails>
                 </Accordion>
                 <Accordion elevation={0} expanded={expanded === 'panel2'} onChange={handleChange('panel2')}>

@@ -69,7 +69,8 @@ describe('<Song/> - Unit Tests', () => {
             artists: [
                 {
                     id: 1,
-                    name: "mike"
+                    name: "mike",
+                    credit: "featured"
                 }
             ],
             albums: [],
